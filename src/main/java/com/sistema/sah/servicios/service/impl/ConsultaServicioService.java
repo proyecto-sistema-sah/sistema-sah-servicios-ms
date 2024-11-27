@@ -5,42 +5,58 @@ import com.sistema.sah.commons.dto.ServicioDto;
 import com.sistema.sah.commons.helper.mapper.ServicioMapper;
 import com.sistema.sah.servicios.repository.ServicioRepository;
 import com.sistema.sah.servicios.service.IConsultaServicioService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementación del servicio para la consulta de servicios.
+ * <p>
+ * Este servicio se encarga de recuperar la lista de servicios disponibles en el sistema
+ * y estructurar la respuesta de manera adecuada.
+ * </p>
+ */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ConsultaServicioService implements IConsultaServicioService {
 
     private final ServicioRepository servicioRepository;
-
     private final ServicioMapper servicioMapper;
 
-    public ConsultaServicioService(
-            @Qualifier("servicio") ServicioRepository servicioRepository,
-            ServicioMapper servicioMapper
-    ) {
-        this.servicioRepository = servicioRepository;
-        this.servicioMapper = servicioMapper;
-    }
-
+    /**
+     * Consulta la lista de servicios disponibles.
+     * <p>
+     * Este método recupera todos los servicios de la base de datos, los mapea a DTOs
+     * y devuelve una respuesta estructurada con el estado, los datos y un mensaje.
+     * </p>
+     *
+     * @return un objeto {@link RespuestaGeneralDto} con la lista de servicios disponibles.
+     */
     @Override
     public RespuestaGeneralDto consultarServicios() {
-        RespuestaGeneralDto respuestaGeneralDto = new RespuestaGeneralDto();
-        try{
+        log.info("Iniciando consulta de servicios");
+
+        try {
+            // Recuperar y mapear la lista de servicios
             List<ServicioDto> servicios = servicioMapper.listEntityTolistDto(servicioRepository.findAll());
-            respuestaGeneralDto.setData(servicios);
-            respuestaGeneralDto.setMessage("Se consultaron correctamente");
-            respuestaGeneralDto.setStatus(HttpStatus.OK);
-        }catch (Exception e){
-            log.error("Error ", e);
-            respuestaGeneralDto.setMessage("Hubo un error en consultar");
-            respuestaGeneralDto.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+
+            log.info("Consulta de servicios completada con éxito. Total de servicios: {}", servicios.size());
+            return RespuestaGeneralDto.builder()
+                    .data(servicios)
+                    .message("Consulta realizada correctamente")
+                    .status(HttpStatus.OK)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error al consultar servicios", e);
+            return RespuestaGeneralDto.builder()
+                    .message("Hubo un error al consultar los servicios")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
         }
-        return respuestaGeneralDto;
     }
 }
