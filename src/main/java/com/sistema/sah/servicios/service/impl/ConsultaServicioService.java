@@ -4,7 +4,9 @@ import com.sistema.sah.commons.dto.RespuestaGeneralDto;
 import com.sistema.sah.commons.dto.ServicioDto;
 import com.sistema.sah.commons.helper.mapper.ServicioMapper;
 import com.sistema.sah.servicios.repository.ServicioRepository;
+import com.sistema.sah.servicios.repository.VistaServicioRepository;
 import com.sistema.sah.servicios.service.IConsultaServicioService;
+import com.sistema.sah.servicios.util.mapper.VistaServicioMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,8 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConsultaServicioService implements IConsultaServicioService {
 
-    private final ServicioRepository servicioRepository;
-    private final ServicioMapper servicioMapper;
+    private final VistaServicioRepository vistaServicioRepository;
+    private final VistaServicioMapper vistaServicioMapper;
 
     /**
      * Consulta la lista de servicios disponibles.
@@ -42,7 +44,7 @@ public class ConsultaServicioService implements IConsultaServicioService {
 
         try {
             // Recuperar y mapear la lista de servicios
-            List<ServicioDto> servicios = servicioMapper.listEntityTolistDto(servicioRepository.findAll());
+            List<ServicioDto> servicios = vistaServicioMapper.entityListToDtoList(vistaServicioRepository.findAll());
 
             log.info("Consulta de servicios completada con éxito. Total de servicios: {}", servicios.size());
             return RespuestaGeneralDto.builder()

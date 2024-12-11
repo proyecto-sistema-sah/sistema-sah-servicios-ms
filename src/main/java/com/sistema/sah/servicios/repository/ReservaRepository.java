@@ -42,7 +42,7 @@ public interface ReservaRepository extends JpaRepository<ReservaEntity, String> 
                   OR (rc.codigoReservaEntityFk.fechaFinReserva BETWEEN :fechaInicioReserva AND :fechaFinReserva)
                   OR (:fechaInicioReserva BETWEEN rc.codigoReservaEntityFk.fechaInicioReserva AND rc.codigoReservaEntityFk.fechaFinReserva)
                   OR (:fechaFinReserva BETWEEN rc.codigoReservaEntityFk.fechaInicioReserva AND rc.codigoReservaEntityFk.fechaFinReserva)
-              )
+              ) AND rc.codigoReservaEntityFk.estadoReservaEntityFk.id = 3
     """)
     Boolean existsReserva(@Param("codigoCuarto") String codigoCuarto,
                           @Param("fechaInicioReserva") LocalDate fechaInicioReserva,
